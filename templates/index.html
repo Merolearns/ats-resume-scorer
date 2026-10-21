@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ATS Resume Scorer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">ATS Resume Scorer</a>
+  <span class="tagline">see your resume the way a matching algorithm sees it</span>
+</header>
+
+<main class="container">
+  {% if error %}
+  <p class="flash">{{ error }}</p>
+  {% endif %}
+
+  <form method="post" action="/analyze" class="panels">
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Your resume</h2>
+        <button type="button" class="ghost" id="load-resume">Load sample resume</button>
+      </div>
+      <textarea name="resume_text" id="resume-input" rows="20"
+        placeholder="Paste your resume text here...">{{ resume_text or "" }}</textarea>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h2>Job description</h2>
+        <button type="button" class="ghost" id="load-jd">Load sample posting</button>
+      </div>
+      <textarea name="jd_text" id="jd-input" rows="20"
+        placeholder="Paste the job description here...">{{ jd_text or "" }}</textarea>
+    </section>
+
+    <div class="actions">
+      <button type="submit" class="primary">Analyze match</button>
+      <p class="hint">Everything runs locally — nothing is uploaded or stored.</p>
+    </div>
+  </form>
+
+  <section class="explainer">
+    <h3>What the score measures</h3>
+    <ul>
+      <li><strong>Skill coverage (45)</strong> — how many of the posting's required
+        skills appear on your resume.</li>
+      <li><strong>Sections (25)</strong> — summary, experience, projects, skills,
+        education, certifications.</li>
+      <li><strong>Quantified results (15)</strong> — numbers tied to impact
+        ($, %, 3x, "cut load time 38%").</li>
+      <li><strong>Length (15)</strong> — full marks in the 400–1000 word range.</li>
+    </ul>
+    <p class="fineprint">A coaching tool, not a real applicant tracking system.
+    Scores are deterministic and relative to the lexicon in <code>skills.py</code>.</p>
+  </section>
+</main>
+
+<script>
+  async function loadSample(name, target) {
+    const r = await fetch("/samples/" + name);
+    const data = await r.json();
+    document.getElementById(target).value = data.text;
+  }
+  document.getElementById("load-resume").onclick = () =>
+    loadSample("sample_resume", "resume-input");
+  document.getElementById("load-jd").onclick = () =>
+    loadSample("sample_job_description", "jd-input");
+</script>
+</body>
+</html>

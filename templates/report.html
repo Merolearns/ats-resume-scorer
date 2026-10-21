@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Match report — ATS Resume Scorer</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="/">ATS Resume Scorer</a>
+  <span class="tagline">match report</span>
+</header>
+
+<main class="container report">
+  <section class="card hero-card">
+    <div class="gauge">
+      {# SVG ring: r=54, circumference ~339.29 #}
+      <svg viewBox="0 0 128 128" width="150" height="150">
+        <circle cx="64" cy="64" r="54" fill="none" stroke="#e5e9f0" stroke-width="12"/>
+        <circle cx="64" cy="64" r="54" fill="none" stroke="#2563eb" stroke-width="12"
+                stroke-linecap="round" stroke-dasharray="339.29"
+                stroke-dashoffset="{{ '%.1f' % (339.29 * (1 - result.score / 100)) }}"
+                transform="rotate(-90 64 64)"/>
+        <text x="64" y="60" text-anchor="middle" class="gauge-num">{{ result.score }}</text>
+        <text x="64" y="80" text-anchor="middle" class="gauge-sub">/ 100</text>
+      </svg>
+    </div>
+    <div class="hero-text">
+      <h1>
+        {% if result.score >= 80 %}Strong match
+        {% elif result.score >= 60 %}Good match, room to improve
+        {% elif result.score >= 40 %}Partial match
+        {% else %}Weak match{% endif %}
+      </h1>
+      <p>{{ result.matched_skills|length }} of {{ result.required_skills|length }}
+         required skills found &middot; {{ result.word_count }} words &middot;
+         {{ result.metric_hits }} quantified achievements</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Score breakdown</h2>
+    {% for item in result.breakdown %}
+    <div class="bar-row">
+      <span class="bar-label">{{ item.label }}</span>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: {{ '%.0f' % (item.value / item.max * 100) }}%"></div>
+      </div>
+      <span class="bar-num">{{ item.value }}/{{ item.max }}</span>
+    </div>
+    {% endfor %}
+  </section>
+
+  <div class="two-col">
+    <section class="card">
+      <h2>Matched skills <span class="count ok">{{ result.matched_skills|length }}</span></h2>
+      {% if result.matched_skills %}
+      <div class="chips">
+        {% for s in result.matched_skills %}<span class="chip match">{{ s }}</span>{% endfor %}
+      </div>
+      {% else %}<p class="muted">None of the posting's required skills were detected.</p>{% endif %}
+    </section>
+
+    <section class="card">
+      <h2>Missing skills <span class="count warn">{{ result.missing_skills|length }}</span></h2>
+      {% if result.missing_skills %}
+      <div class="chips">
+        {% for s in result.missing_skills %}<span class="chip miss">{{ s }}</span>{% endfor %}
+      </div>
+      {% else %}<p class="muted">Full keyword coverage — nice.</p>{% endif %}
+    </section>
+  </div>
+
+  <section class="card">
+    <h2>Section check</h2>
+    <ul class="checklist">
+      {% for name, present in result.sections.items() %}
+      <li class="{{ 'yes' if present else 'no' }}">
+        <span class="tick">{{ '✓' if present else '✗' }}</span> {{ name }}
+      </li>
+      {% endfor %}
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>Tips, in priority order</h2>
+    {% for tip in result.tips %}
+    <div class="tip {{ tip.priority }}">
+      <span class="priority">{{ tip.priority }}</span>
+      <div><strong>{{ tip.title }}</strong><p>{{ tip.body }}</p></div>
+    </div>
+    {% endfor %}
+  </section>
+
+  <p class="center"><a class="primary link-btn" href="/">Score another pair</a></p>
+</main>
+</body>
+</html>

@@ -1,0 +1,37 @@
+Jordan Lee
+Data Analyst | Austin, TX | jordan.lee.example@mail.com | (555) 014-2281
+
+SUMMARY
+Data analyst with 4 years of experience turning messy operational data into
+decisions. Comfortable across the full pipeline: SQL extraction, Python
+analysis, and executive dashboards in Power BI and Tableau.
+
+EXPERIENCE
+Data Analyst — BrightCart Retail, Austin, TX
+Jan 2023 – Present
+- Built a daily ETL job in Python and Airflow that consolidates orders from
+  3 storefronts into a Snowflake data warehouse; cut manual reporting time
+  by 12 hours per week.
+- Designed a Power BI sales dashboard used by 40+ store managers; increased
+  weekly active usage 3x within two months of launch.
+- Ran A/B tests on checkout flows with a data scientist; the winning variant
+  lifted conversion 4.2%, worth roughly $310K in annual revenue.
+- Wrote dbt models to standardize product margin logic across the org.
+
+Data Analyst Intern — City of Austin Open Data Program
+Jun 2022 – Dec 2022
+- Cleaned and validated 200K+ rows of public transit ridership data with
+  pandas; published a reproducible cleaning notebook.
+- Created Tableau dashboards tracking ridership trends for public meetings.
+
+PROJECTS
+Churn Signal — customer churn analysis
+- Logistic regression model (scikit-learn) on 50K subscriber records;
+  identified 3 churn drivers and presented retention recommendations.
+
+SKILLS
+Python, SQL, pandas, Power BI, Tableau, Excel, Airflow, dbt, Snowflake,
+statistics, A/B testing, data visualization, storytelling
+
+EDUCATION
+B.S. Data Science, University of Texas at Austin, 2022

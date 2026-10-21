@@ -1,0 +1,23 @@
+Data Analyst — Growth Analytics (fictional posting)
+
+Northwind Outfitters is hiring a Data Analyst to join our Growth Analytics
+team. You will partner with product and marketing to measure experiments,
+build dashboards, and guide roadmap decisions with data.
+
+Responsibilities
+- Design and analyze A/B tests; communicate results to stakeholders.
+- Build and maintain dashboards in Tableau and Power BI.
+- Write clean, documented SQL against our Snowflake data warehouse.
+- Partner with data engineering on dbt models and data quality checks.
+
+Required qualifications
+- 3+ years of experience in data analysis, ideally in e-commerce.
+- Strong SQL and experience with Python (pandas) for analysis.
+- Experience with statistical methods: hypothesis testing and regression.
+- Familiarity with the modern data stack: Snowflake, dbt, Airflow.
+- Excellent stakeholder communication and storytelling skills.
+
+Nice to have
+- Experience with machine learning or forecasting.
+- Exposure to AWS or GCP.
+- Knowledge of experimental design and causal inference.
