@@ -42,14 +42,19 @@ _METRIC_PATTERNS = [
     r"requests|tickets|models|features|tables|pipelines|dashboards|reports)\b",
 ]
 
+# Compiled once at import: analyze() calls find_skills twice per run and the
+# lexicon is large, so recompiling a regex per skill on every call is pure
+# waste. Behavior is identical to compiling inside the loop.
+_SKILL_PATTERNS = [
+    (skill, re.compile(r"(?<!\w)" + re.escape(skill) + r"(?!\w)", re.IGNORECASE))
+    for skill in SKILLS
+]
+_METRIC_COMPILED = [re.compile(pattern) for pattern in _METRIC_PATTERNS]
+
 
 def find_skills(text):
     """Return the sorted list of lexicon skills present in text (case-insensitive)."""
-    found = set()
-    for skill in SKILLS:
-        pattern = r"(?<!\w)" + re.escape(skill) + r"(?!\w)"
-        if re.search(pattern, text, re.IGNORECASE):
-            found.add(skill)
+    found = {skill for skill, pattern in _SKILL_PATTERNS if pattern.search(text)}
     return sorted(found)
 
 
@@ -70,8 +75,8 @@ def count_metric_hits(text):
     """Count distinct quantified-achievement patterns in the text."""
     lowered = text.lower()
     hits = 0
-    for pattern in _METRIC_PATTERNS:
-        hits += len(re.findall(pattern, lowered))
+    for pattern in _METRIC_COMPILED:
+        hits += len(pattern.findall(lowered))
     return hits
 
 
