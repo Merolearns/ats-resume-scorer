@@ -87,6 +87,24 @@ def test_analyze_empty_inputs_does_not_crash():
     assert result["tips"]  # still offers advice
 
 
+def test_analyze_jd_without_skills_drops_coverage_dimension():
+    resume = (
+        "SUMMARY\nPython analyst with 5 years of experience.\n"
+        "EXPERIENCE\nUsed Python and SQL daily at Acme Corp. Cut costs 20%.\n"
+        "PROJECTS\nChurn dashboard.\nSKILLS\nPython, SQL\n"
+        "EDUCATION\nBS Computer Science\nCERTIFICATIONS\nAWS."
+    )
+    result = analyze(resume, "Exciting opening at a growing firm. Apply today.")
+    assert result["required_skills"] == []
+    labels = [item["label"] for item in result["breakdown"]]
+    assert "Skill coverage" not in labels
+    assert sum(item["max"] for item in result["breakdown"]) == 100
+    assert round(sum(item["value"] for item in result["breakdown"])) == result["score"]
+    assert result["score"] > 0  # no 45-point penalty for an empty coverage
+    assert any(t["title"] == "No skills found in the job posting"
+               for t in result["tips"])
+
+
 def test_analyze_breakdown_sums_to_score():
     result = analyze("Python and SQL experience.", "We need Python, SQL, R, Spark.")
     total = sum(item["value"] for item in result["breakdown"])

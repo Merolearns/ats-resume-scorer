@@ -93,6 +93,15 @@ def build_tips(analysis):
     """Turn the analysis numbers into a readable, prioritized tip list."""
     tips = []
 
+    if not analysis["required_skills"]:
+        tips.append({
+            "title": "No skills found in the job posting",
+            "body": "The posting matched none of the known skills, so skill "
+                    "coverage was left out of the score. Paste the full posting "
+                    "text (not just the title) for a more useful match.",
+            "priority": "medium",
+        })
+
     coverage = analysis["coverage"]
     if coverage < 1.0 and analysis["missing_skills"]:
         shown = ", ".join(analysis["missing_skills"][:6])
@@ -173,7 +182,25 @@ def analyze(resume_text, jd_text):
     words = len(re.findall(r"\w+", resume_text))
     len_score = length_score(words)
 
-    overall = round(45 * coverage + 25 * section_score + 15 * metric_score + 15 * len_score)
+    breakdown = [
+        {"label": "Skill coverage", "value": round(45 * coverage, 1), "max": 45},
+        {"label": "Sections", "value": round(25 * section_score, 1), "max": 25},
+        {"label": "Quantified results", "value": round(15 * metric_score, 1), "max": 15},
+        {"label": "Length", "value": round(15 * len_score, 1), "max": 15},
+    ]
+    if required:
+        overall = round(sum(item["value"] for item in breakdown))
+    else:
+        # The posting held no lexicon skills: dropping the coverage row
+        # instead of scoring it zero, and stretching the rest back to
+        # a 100-point scale. Rounding the scaled maxes may leave the total
+        # at 99, so the last row absorbs the difference.
+        breakdown = [item for item in breakdown if item["label"] != "Skill coverage"]
+        for item in breakdown:
+            item["value"] = round(item["value"] * 100 / 55, 1)
+            item["max"] = round(item["max"] * 100 / 55)
+        breakdown[-1]["max"] += 100 - sum(item["max"] for item in breakdown)
+        overall = round(sum(item["value"] for item in breakdown))
 
     analysis = {
         "score": overall,
@@ -185,12 +212,7 @@ def analyze(resume_text, jd_text):
         "sections": sections,
         "metric_hits": metric_hits,
         "word_count": words,
-        "breakdown": [
-            {"label": "Skill coverage", "value": round(45 * coverage, 1), "max": 45},
-            {"label": "Sections", "value": round(25 * section_score, 1), "max": 25},
-            {"label": "Quantified results", "value": round(15 * metric_score, 1), "max": 15},
-            {"label": "Length", "value": round(15 * len_score, 1), "max": 15},
-        ],
+        "breakdown": breakdown,
     }
     analysis["tips"] = build_tips(analysis)
     return analysis
