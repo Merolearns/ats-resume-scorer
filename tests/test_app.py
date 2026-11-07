@@ -50,6 +50,20 @@ def test_analyze_renders_report(client):
     assert b"airflow" in r.data.lower()
 
 
+def test_api_analyze_rejects_non_string_inputs(client):
+    r = client.post(
+        "/api/analyze",
+        json={"resume": 123, "job_description": "Need Python."},
+    )
+    assert r.status_code == 400
+    assert b"must be strings" in r.data
+    r = client.post(
+        "/api/analyze",
+        json={"resume": "Python.", "job_description": ["Python"]},
+    )
+    assert r.status_code == 400
+
+
 def test_api_analyze_json(client):
     r = client.post(
         "/api/analyze",

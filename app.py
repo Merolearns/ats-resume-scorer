@@ -58,7 +58,13 @@ def analyze_page():
 @app.route("/api/analyze", methods=["POST"])
 def analyze_api():
     payload = request.get_json(force=True, silent=True) or {}
-    return jsonify(analyze(payload.get("resume", ""), payload.get("job_description", "")))
+    resume = payload.get("resume", "")
+    jd = payload.get("job_description", "")
+    if not isinstance(resume, str) or not isinstance(jd, str):
+        # A JSON number/list would otherwise 500 inside analyze() when the
+        # skill regexes get a non-string to search.
+        return jsonify({"error": "resume and job_description must be strings"}), 400
+    return jsonify(analyze(resume, jd))
 
 
 if __name__ == "__main__":
