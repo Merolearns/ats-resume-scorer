@@ -64,6 +64,17 @@ def test_api_analyze_rejects_non_string_inputs(client):
     assert r.status_code == 400
 
 
+def test_api_analyze_rejects_blank_inputs(client):
+    for payload in (
+        {"resume": "", "job_description": "Need Python."},
+        {"resume": "Python.", "job_description": "   \n\t"},
+        {"job_description": "Need Python."},
+    ):
+        r = client.post("/api/analyze", json=payload)
+        assert r.status_code == 400
+        assert b"non-empty" in r.data
+
+
 def test_api_analyze_json(client):
     r = client.post(
         "/api/analyze",

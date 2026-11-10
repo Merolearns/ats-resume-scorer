@@ -64,6 +64,9 @@ def analyze_api():
         # A JSON number/list would otherwise 500 inside analyze() when the
         # skill regexes get a non-string to search.
         return jsonify({"error": "resume and job_description must be strings"}), 400
+    if not resume.strip() or not jd.strip():
+        # Blank input would score 0, which reads like a real result.
+        return jsonify({"error": "resume and job_description must be non-empty strings"}), 400
     return jsonify(analyze(resume, jd))
 
 
