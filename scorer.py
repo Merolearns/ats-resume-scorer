@@ -30,6 +30,10 @@ SECTIONS = [
 # A line counts as a section header only if it is short (under 6 words).
 _MAX_HEADER_WORDS = 6
 
+# Numbered headers ("1. Experience", "2) Education") are common in resumes;
+# the numbering is stripped before matching so they count like plain headers.
+_NUMBERED_HEADER = re.compile(r"^\d+[.)]\s+")
+
 # Quantified-achievement patterns: numbers tied to impact words, money,
 # percentages, or explicit multipliers.
 _METRIC_PATTERNS = [
@@ -63,6 +67,7 @@ def detect_sections(text):
     present = {name: False for name, _ in SECTIONS}
     for line in text.splitlines():
         stripped = line.strip().strip("#:*-").strip()
+        stripped = _NUMBERED_HEADER.sub("", stripped)
         if not stripped or len(stripped.split()) > _MAX_HEADER_WORDS:
             continue
         for name, pattern in SECTIONS:

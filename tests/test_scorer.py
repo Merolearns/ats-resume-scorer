@@ -35,6 +35,17 @@ def test_detect_sections_finds_headers_not_body_text():
     assert sections["Projects"] is False
 
 
+def test_detect_sections_finds_numbered_headers():
+    # "1. Experience" / "2) Education" are common resume styles and used
+    # to be missed entirely because the leading number broke the match.
+    text = "1. Experience\nWorked at X.\n2) Education\nBS CS."
+    sections = detect_sections(text)
+    assert sections["Experience"] is True
+    assert sections["Education"] is True
+    # Numbering alone doesn't turn a body line into a header.
+    assert detect_sections("1. Built 5 dashboards with Python.")["Experience"] is False
+
+
 def test_detect_sections_ignores_long_lines():
     # A bullet that merely mentions "experience" should not count as a header
     text = "Five years of experience building dashboards and reports for clients."
