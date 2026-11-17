@@ -17,14 +17,16 @@ import re
 from skills import SKILLS
 
 # Sections we expect on a typical data/AI resume. Each entry is
-# (display name, regex matched against short lines only).
+# (display name, regex matched against short lines only). The whole
+# alternation is anchored (^...$): without the trailing anchor a short
+# body line like "Experience in Python" used to count as the section.
 SECTIONS = [
-    ("Summary", r"^(professional\s+)?(career\s+)?summary|objective|profile$"),
-    ("Experience", r"^((professional|work)\s+)?experience|employment(\s+history)?$"),
+    ("Summary", r"^(?:(?:professional\s+)?(?:career\s+)?summary|objective|profile)$"),
+    ("Experience", r"^(?:(?:(?:professional|work)\s+)?experience|employment(?:\s+history)?)$"),
     ("Projects", r"^projects?$"),
-    ("Skills", r"^(technical\s+|core\s+)?skills|core\s+competencies|technologies$"),
-    ("Education", r"^education|academic\s+background$"),
-    ("Certifications", r"^certifications?|licenses?$"),
+    ("Skills", r"^(?:(?:technical\s+|core\s+)?skills|core\s+competencies|technologies)$"),
+    ("Education", r"^(?:education|academic\s+background)$"),
+    ("Certifications", r"^(?:certifications?|licenses?)$"),
 ]
 
 # A line counts as a section header only if it is short (under 6 words).

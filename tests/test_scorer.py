@@ -27,6 +27,21 @@ def test_find_skills_respects_word_boundaries():
     assert "c++" in found
 
 
+def test_detect_sections_ignores_short_body_lines_starting_with_section_words():
+    # The header patterns are anchored end to end: a short body line that
+    # merely starts with a section word is not a header (the old patterns
+    # only anchored the start, so these all counted).
+    assert detect_sections("Experience in Python and SQL")["Experience"] is False
+    assert detect_sections("Education policy and funding")["Education"] is False
+    assert detect_sections("Skills include Python and SQL")["Skills"] is False
+    assert detect_sections("Certifications are key to this role")["Certifications"] is False
+    assert detect_sections("Summary of the project below")["Summary"] is False
+    # Real headers still match.
+    assert detect_sections("Work Experience")["Experience"] is True
+    assert detect_sections("Professional Summary")["Summary"] is True
+    assert detect_sections("Core Competencies")["Skills"] is True
+
+
 def test_detect_sections_finds_headers_not_body_text():
     text = "SUMMARY\nSenior analyst with 5 years.\nEXPERIENCE\nAnalyst at X."
     sections = detect_sections(text)
