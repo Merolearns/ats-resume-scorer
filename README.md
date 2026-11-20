@@ -37,7 +37,7 @@ in `samples/` (a fictional data-analyst resume and a fictional job posting).
 ## Example output
 
 Running the included samples through the app produces this report
-(score 62/100):
+(score 60/100):
 
 - **Match verdict:** Good match, room to improve
 - **Skill coverage:** 11 of 20 required skills found (55%) — matched: airflow,
@@ -47,7 +47,7 @@ Running the included samples through the app produces this report
   design, forecasting, gcp, hypothesis testing, machine learning,
   stakeholder communication
 - **Breakdown:** Skill coverage 24.8/45 · Sections 20.8/25 · Quantified
-  results 7.5/15 · Length 8.7/15
+  results 5.6/15 · Length 8.7/15
 - **Section check:** Summary, Experience, Projects, Skills, Education found;
   Certifications missing
 - **Tips (in order):** Close the keyword gap (high) · Resume looks thin —

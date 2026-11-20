@@ -57,6 +57,9 @@ _SKILL_PATTERNS = [
 ]
 _METRIC_COMPILED = [re.compile(pattern) for pattern in _METRIC_PATTERNS]
 
+# Numbers inside a metric match, for deduplicating overlapping patterns.
+_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+
 
 def find_skills(text):
     """Return the sorted list of lexicon skills present in text (case-insensitive)."""
@@ -79,12 +82,23 @@ def detect_sections(text):
 
 
 def count_metric_hits(text):
-    """Count distinct quantified-achievement patterns in the text."""
+    """Count distinct quantified achievements in the text.
+
+    Several patterns can match the same number ("lifted conversion 4.2%"
+    matches both the verb pattern and the % pattern), so matches are
+    deduplicated by the span of the number they contain — each number
+    counts once, however many patterns hit it.
+    """
     lowered = text.lower()
-    hits = 0
+    seen = set()
     for pattern in _METRIC_COMPILED:
-        hits += len(pattern.findall(lowered))
-    return hits
+        for match in pattern.finditer(lowered):
+            number = _NUMBER.search(match.group(0))
+            if number is None:
+                continue
+            start = match.start() + number.start()
+            seen.add((start, start + len(number.group(0))))
+    return len(seen)
 
 
 def length_score(words):

@@ -69,7 +69,14 @@ def test_detect_sections_ignores_long_lines():
 
 def test_count_metric_hits_counts_quantified_achievements():
     text = "Cut load time 38%. Saved $12K. Improved speed 3x."
-    assert count_metric_hits(text) >= 3
+    assert count_metric_hits(text) == 3
+
+
+def test_count_metric_hits_counts_each_number_once():
+    # "4.2%" used to count twice: once for the verb pattern ("lifted
+    # conversion 4.2") and once for the % pattern. One number, one hit.
+    assert count_metric_hits("Lifted conversion 4.2%.") == 1
+    assert count_metric_hits("Cut load time 38% and saved $12K.") == 2
 
 
 def test_count_metric_hits_zero_on_vague_bullets():
@@ -147,7 +154,7 @@ def test_build_tips_surfaces_missing_skills_first():
 def test_build_tips_celebrates_strong_match():
     resume = (
         "SUMMARY\nData analyst.\nEXPERIENCE\nBuilt ETL with Python, SQL and Airflow. "
-        "Cut costs 20% and saved $50K.\nPROJECTS\nChurn model.\nSKILLS\nPython, SQL\n"
+        "Cut costs 20% and saved $50K and onboarded 40 users.\nPROJECTS\nChurn model.\nSKILLS\nPython, SQL\n"
         "EDUCATION\nBS\nCERTIFICATIONS\nAWS.\n" + "Python SQL analysis. " * 150
     )
     tips = build_tips(analyze(resume, "Need Python and SQL."))
@@ -164,5 +171,5 @@ def test_sample_pair_produces_reported_score():
         jd = f.read()
     result = analyze(resume, jd)
     # Honest regression check against the README example output
-    assert result["score"] == 62
+    assert result["score"] == 60
     assert round(result["coverage"], 2) == 0.55
