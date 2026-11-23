@@ -27,6 +27,20 @@ def test_find_skills_respects_word_boundaries():
     assert "c++" in found
 
 
+def test_find_skills_matches_plural_forms():
+    # Plurals are the norm in real resumes and job postings ("LLMs",
+    # "REST APIs") and used to miss entirely, scoring zero coverage for
+    # skills the resume actually has.
+    found = find_skills("Built apps with LLMs and REST APIs, tracked KPIs.")
+    assert "llm" in found
+    assert "rest api" in found
+    assert "kpi" in found
+    assert find_skills("Built ETLs and dashboards.") == ["dashboard", "etl"]
+    # Singulars still match, and the one-letter skill stays exact.
+    assert find_skills("Used Python and R daily.") == ["python", "r"]
+    assert "r" not in find_skills("Paid Rs 500 for the course.")
+
+
 def test_detect_sections_ignores_short_body_lines_starting_with_section_words():
     # The header patterns are anchored end to end: a short body line that
     # merely starts with a section word is not a header (the old patterns
@@ -114,6 +128,15 @@ def test_analyze_perfect_match_scores_high():
     assert result["score"] >= 60
 
 
+def test_analyze_counts_plural_skills_toward_coverage():
+    # A resume that has two of the three required skills must not score
+    # zero coverage just because they appear in plural form.
+    result = analyze("Built apps with LLMs and REST APIs.",
+                     "Need LLMs, REST APIs, Python.")
+    assert result["matched_skills"] == ["llm", "rest api"]
+    assert result["coverage"] == pytest.approx(2 / 3)
+
+
 def test_analyze_empty_inputs_does_not_crash():
     result = analyze("", "")
     assert result["score"] == 0
@@ -171,5 +194,5 @@ def test_sample_pair_produces_reported_score():
         jd = f.read()
     result = analyze(resume, jd)
     # Honest regression check against the README example output
-    assert result["score"] == 60
-    assert round(result["coverage"], 2) == 0.55
+    assert result["score"] == 61
+    assert round(result["coverage"], 2) == 0.57

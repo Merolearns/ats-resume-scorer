@@ -37,16 +37,16 @@ in `samples/` (a fictional data-analyst resume and a fictional job posting).
 ## Example output
 
 Running the included samples through the app produces this report
-(score 60/100):
+(score 61/100):
 
 - **Match verdict:** Good match, room to improve
-- **Skill coverage:** 11 of 20 required skills found (55%) — matched: airflow,
-  data warehouse, dbt, pandas, power bi, python, regression, snowflake, sql,
+- **Skill coverage:** 12 of 21 required skills found (57%) — matched: airflow,
+  dashboard, data warehouse, dbt, pandas, power bi, python, regression, snowflake, sql,
   storytelling, tableau
 - **Missing skills:** aws, data analysis, data engineering, experimental
   design, forecasting, gcp, hypothesis testing, machine learning,
   stakeholder communication
-- **Breakdown:** Skill coverage 24.8/45 · Sections 20.8/25 · Quantified
+- **Breakdown:** Skill coverage 25.7/45 · Sections 20.8/25 · Quantified
   results 5.6/15 · Length 8.7/15
 - **Section check:** Summary, Experience, Projects, Skills, Education found;
   Certifications missing

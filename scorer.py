@@ -51,8 +51,16 @@ _METRIC_PATTERNS = [
 # Compiled once at import: analyze() calls find_skills twice per run and the
 # lexicon is large, so recompiling a regex per skill on every call is pure
 # waste. Behavior is identical to compiling inside the loop.
+# Multi-character skills accept one trailing "s" ("LLMs", "REST APIs",
+# "dashboards") — plurals are the norm in real resumes and job postings,
+# and the exact form used to miss entirely. Single-character skills ("r")
+# stay exact so "Rs 500" never matches.
 _SKILL_PATTERNS = [
-    (skill, re.compile(r"(?<!\w)" + re.escape(skill) + r"(?!\w)", re.IGNORECASE))
+    (skill, re.compile(
+        r"(?<!\w)" + re.escape(skill)
+        + (r"s?(?!\w)" if len(skill) > 1 else r"(?!\w)"),
+        re.IGNORECASE,
+    ))
     for skill in SKILLS
 ]
 _METRIC_COMPILED = [re.compile(pattern) for pattern in _METRIC_PATTERNS]
@@ -218,8 +226,11 @@ def analyze(resume_text, jd_text):
         # at 99, so the last row absorbs the difference.
         breakdown = [item for item in breakdown if item["label"] != "Skill coverage"]
         for item in breakdown:
-            item["value"] = round(item["value"] * 100 / 55, 1)
-            item["max"] = round(item["max"] * 100 / 55)
+            # Scale each value against its own scaled max, so a full-marks
+            # value can never round above its max (25 -> 45.5/45 before).
+            orig_max = item["max"]
+            item["max"] = round(orig_max * 100 / 55)
+            item["value"] = round(item["max"] * item["value"] / orig_max, 1)
         breakdown[-1]["max"] += 100 - sum(item["max"] for item in breakdown)
         overall = round(sum(item["value"] for item in breakdown))
 
