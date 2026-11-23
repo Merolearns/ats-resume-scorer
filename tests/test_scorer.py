@@ -161,6 +161,28 @@ def test_analyze_jd_without_skills_drops_coverage_dimension():
                for t in result["tips"])
 
 
+def test_analyze_full_marks_without_skills_never_exceeds_max():
+    # A perfect resume against a skill-less posting used to report
+    # Sections 45.5/45 and Quantified 27.3/27: values and maxes were
+    # scaled independently, so full marks rounded above the max and
+    # the report bars rendered past 100% width.
+    resume = (
+        "SUMMARY\nData analyst with 8 years of experience.\n"
+        "EXPERIENCE\nCut report time 10% and saved $20K annually. "
+        "Grew the user base 30% and reduced churn 40%. "
+        "Automated pipelines for 50 dashboards and saved $60K. "
+        "Improved accuracy 70% and cut errors 80%.\n"
+        "PROJECTS\nChurn dashboard.\nSKILLS\nPython, SQL\n"
+        "EDUCATION\nBS Computer Science\nCERTIFICATIONS\nAWS.\n"
+        + "Python SQL analysis. " * 150
+    )
+    result = analyze(resume, "Exciting opening at a growing firm. Apply today.")
+    assert result["score"] == 100
+    for item in result["breakdown"]:
+        assert item["value"] <= item["max"]
+    assert round(sum(item["value"] for item in result["breakdown"])) == 100
+
+
 def test_analyze_breakdown_sums_to_score():
     result = analyze("Python and SQL experience.", "We need Python, SQL, R, Spark.")
     total = sum(item["value"] for item in result["breakdown"])

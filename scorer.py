@@ -223,15 +223,16 @@ def analyze(resume_text, jd_text):
         # The posting held no lexicon skills: dropping the coverage row
         # instead of scoring it zero, and stretching the rest back to
         # a 100-point scale. Rounding the scaled maxes may leave the total
-        # at 99, so the last row absorbs the difference.
+        # at 99, so the last row absorbs the difference first; values are
+        # then scaled against their own (adjusted) max, so a full-marks
+        # value can never round above it (25 -> 45.5/45 before).
         breakdown = [item for item in breakdown if item["label"] != "Skill coverage"]
+        orig = [(item["value"], item["max"]) for item in breakdown]
         for item in breakdown:
-            # Scale each value against its own scaled max, so a full-marks
-            # value can never round above its max (25 -> 45.5/45 before).
-            orig_max = item["max"]
-            item["max"] = round(orig_max * 100 / 55)
-            item["value"] = round(item["max"] * item["value"] / orig_max, 1)
+            item["max"] = round(item["max"] * 100 / 55)
         breakdown[-1]["max"] += 100 - sum(item["max"] for item in breakdown)
+        for item, (value, orig_max) in zip(breakdown, orig):
+            item["value"] = round(item["max"] * value / orig_max, 1)
         overall = round(sum(item["value"] for item in breakdown))
 
     analysis = {
