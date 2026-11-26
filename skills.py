@@ -10,11 +10,11 @@ SKILLS = [
 
     # ml / ai
     "machine learning", "deep learning", "natural language processing", "nlp",
-    "computer vision", "llm", "generative ai", "genai", "transformers",
+    "computer vision", "llm", "generative ai", "genai", "agentic ai", "transformers",
     "pytorch", "tensorflow", "scikit-learn", "keras", "xgboost", "lightgbm",
-    "hugging face", "langchain", "rag", "prompt engineering", "embeddings",
+    "hugging face", "langchain", "langgraph", "rag", "prompt engineering", "embeddings",
     "fine-tuning", "model evaluation", "hyperparameter tuning",
-    "cross-validation", "mlops", "model deployment", "model monitoring",
+    "cross-validation", "mlops", "mlflow", "model deployment", "model monitoring",
     "anomaly detection", "recommendation systems", "sentiment analysis",
     "topic modeling", "named entity recognition", "summarization",
 
@@ -26,7 +26,7 @@ SKILLS = [
 
     # python data stack
     "pandas", "numpy", "matplotlib", "seaborn", "plotly", "scipy",
-    "statsmodels", "polars", "jupyter", "notebooks",
+    "statsmodels", "polars", "dask", "streamlit", "jupyter", "notebooks",
 
     # bi / spreadsheets
     "power bi", "tableau", "looker", "excel", "google sheets", "qlik",
@@ -43,8 +43,8 @@ SKILLS = [
     "redshift", "docker", "kubernetes", "terraform", "ci/cd", "github actions",
 
     # databases
-    "postgresql", "mysql", "sqlite", "mongodb", "redis", "elasticsearch",
-    "cassandra", "dynamodb", "sql server", "oracle",
+    "postgresql", "mysql", "sqlite", "duckdb", "mongodb", "redis", "elasticsearch",
+    "cassandra", "dynamodb", "sql server", "oracle", "vector database",
 
     # web / backend
     "rest api", "graphql", "fastapi", "flask", "django", "node.js",

@@ -41,6 +41,19 @@ def test_find_skills_matches_plural_forms():
     assert "r" not in find_skills("Paid Rs 500 for the course.")
 
 
+def test_find_skills_covers_newer_data_stack():
+    # Skills that show up constantly in current data/AI postings but used
+    # to miss entirely, costing real coverage for resumes that have them.
+    found = find_skills(
+        "Built an agentic AI assistant with LangGraph, a Streamlit front "
+        "end, MLflow tracking, Dask jobs and DuckDB storage."
+    )
+    assert {"agentic ai", "langgraph", "streamlit", "mlflow", "dask",
+            "duckdb"} <= set(found)
+    assert find_skills("We run vector databases for retrieval.") == [
+        "vector database"]
+
+
 def test_detect_sections_ignores_short_body_lines_starting_with_section_words():
     # The header patterns are anchored end to end: a short body line that
     # merely starts with a section word is not a header (the old patterns
