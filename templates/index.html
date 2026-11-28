@@ -59,15 +59,24 @@
 </main>
 
 <script>
-  async function loadSample(name, target) {
-    const r = await fetch("/samples/" + name);
-    const data = await r.json();
-    document.getElementById(target).value = data.text;
+  async function loadSample(name, target, btn) {
+    // respond instantly so the click never feels dead while the fetch runs
+    var label = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Loading…";
+    try {
+      const r = await fetch("/samples/" + name);
+      const data = await r.json();
+      document.getElementById(target).value = data.text;
+    } finally {
+      btn.disabled = false;
+      btn.textContent = label;
+    }
   }
-  document.getElementById("load-resume").onclick = () =>
-    loadSample("sample_resume", "resume-input");
-  document.getElementById("load-jd").onclick = () =>
-    loadSample("sample_job_description", "jd-input");
+  document.getElementById("load-resume").onclick = (e) =>
+    loadSample("sample_resume", "resume-input", e.currentTarget);
+  document.getElementById("load-jd").onclick = (e) =>
+    loadSample("sample_job_description", "jd-input", e.currentTarget);
 </script>
 </body>
 </html>
